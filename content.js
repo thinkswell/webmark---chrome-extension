@@ -1,8 +1,9 @@
 console.log("I am content and can manipulate....");
 
 var webMarks = [];
-
-var { localStorage, location } = window;
+const stylings =
+  "width: 50px; height: 30px; position: absolute; background: #fff222;";
+const cutIcon = "cursor: pointer;position:absolute; top:-15px; right:-7px;";
 
 (function () {
   console.log("Checking for existing webMarks....");
@@ -20,15 +21,11 @@ function recievedCmd(message, sender, sendResponse) {
 function addWebmark() {
   console.log("Creating Webmark.");
 
-  const stylings =
-    "width: 50px; height: 30px; position: absolute; background: #fff222;";
-  const cutIcon = "cursor: pointer;position:absolute; top:-15px; right:-7px;";
-
   const mark = document.createElement("span");
   mark.setAttribute("style", stylings);
+  mark.setAttribute("id", `webMark${Math.random() * webMarks.length + 1}`);
   mark.innerHTML = "<p>❌</p>";
   mark.children[0].setAttribute("style", cutIcon);
-  mark.children[0].setAttribute("id", `webMark${webMarks.length + 1}`);
 
   document.body.appendChild(mark);
 
@@ -37,6 +34,20 @@ function addWebmark() {
   mark.children[0].addEventListener("click", deleteMark);
 
   function deleteMark() {
+    console.log(mark.id);
+
+    let newWebMarks = JSON.parse(
+      window.localStorage[`webMark~${window.location.href}`]
+    );
+
+    newWebMarks = newWebMarks.filter((webMark) => webMark.id !== mark.id);
+    window.localStorage[`webMark~${window.location.href}`] = JSON.stringify(
+      newWebMarks
+    );
+    console.log(newWebMarks);
+
+    webMarks = [...newWebMarks];
+
     mark.remove();
   }
 
@@ -49,14 +60,16 @@ function addWebmark() {
     window.removeEventListener("mousemove", dragMark);
 
     const webMark = {
-      id: webMarks.length + 1,
+      id: mark.id,
       webMarkX: mark.style.left,
       webMarkY: mark.style.top,
     };
 
     webMarks.push(webMark);
 
-    localStorage[`webMark~${location.href}`] = JSON.stringify(webMarks);
+    window.localStorage[`webMark~${window.location.href}`] = JSON.stringify(
+      webMarks
+    );
 
     window.removeEventListener("click", dropMark);
   }
