@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "webMarks",
+  "version": "1.00",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "kicon.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
